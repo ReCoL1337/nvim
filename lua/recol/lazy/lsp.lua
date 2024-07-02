@@ -26,8 +26,14 @@ return {
             local lsp_zero = require('lsp-zero')
             lsp_zero.extend_cmp()
 
+            local cmp_autopairs = require('nvim-autopairs.completion.cmp')
             local cmp = require('cmp')
             local cmp_action = lsp_zero.cmp_action()
+
+            cmp.event:on(
+                'confirm_done',
+                cmp_autopairs.on_confirm_done()
+            )
 
             cmp.setup({
                 formatting = lsp_zero.cmp_format({ details = true }),
