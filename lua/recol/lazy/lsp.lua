@@ -90,6 +90,7 @@ return {
                     'htmx',
                     'lua_ls',
                     'pylsp',
+                    'zls',
                 },
                 handlers = {
                     lsp_zero.default_setup,
