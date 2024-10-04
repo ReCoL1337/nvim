@@ -1,11 +1,11 @@
 return {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-    config = function () 
+    config = function ()
       local configs = require("nvim-treesitter.configs")
 
       configs.setup({
-          ensure_installed = { "htmldjango", "go", "python", "c", "lua", "vim", "vimdoc", "query", "heex", "javascript", "html" },
+          ensure_installed = { "zig", "htmldjango", "go", "python", "c", "lua", "vim", "vimdoc", "query", "heex", "javascript", "html" },
           sync_install = false,
           highlight = { enable = true , additional_vim_regex_highlighting = false },
         })
