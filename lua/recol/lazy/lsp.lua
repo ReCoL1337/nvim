@@ -72,6 +72,19 @@ return {
             local lsp_zero = require('lsp-zero')
             lsp_zero.extend_lspconfig()
 
+            -- Templ filetype setup
+            vim.filetype.add({ extension = { templ = "templ" } })
+
+            -- Templ format on save
+            vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+                pattern = { "*.templ" },
+                callback = function()
+                    local file_name = vim.api.nvim_buf_get_name(0)
+                    vim.cmd(":silent !templ fmt " .. file_name)
+                    vim.cmd('e!')
+                end
+            })
+
             lsp_zero.on_attach(function(client, bufnr)
                 local opts = { buffer = bufnr, remap = false }
                 vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
@@ -98,6 +111,10 @@ return {
                     'lua_ls',
                     'pylsp',
                     'zls',
+                    'templ',
+                    'html',
+                    'tailwindcss',
+                    'emmet_ls',
                 },
                 handlers = {
                     lsp_zero.default_setup,
@@ -105,6 +122,43 @@ return {
                         -- (Optional) Configure lua language server for neovim
                         local lua_opts = lsp_zero.nvim_lua_ls()
                         require('lspconfig').lua_ls.setup(lua_opts)
+                    end,
+                    templ = function()
+                        local lspconfig = require('lspconfig')
+                        local configs = require('lspconfig.configs')
+                        if not configs.templ then
+                            configs.templ = {
+                                default_config = {
+                                    cmd = { "templ", "lsp", "-http=localhost:7474", "-log=/tmp/templ.log" },
+                                    filetypes = { "templ" },
+                                    root_dir = lspconfig.util.root_pattern("go.mod", ".git"),
+                                    settings = {},
+                                },
+                            }
+                        end
+                        lspconfig.templ.setup({})
+                    end,
+                    html = function()
+                        require('lspconfig').html.setup({
+                            filetypes = { "html", "templ" },
+                        })
+                    end,
+                    htmx = function()
+                        require('lspconfig').htmx.setup({
+                            filetypes = { "html", "templ" },
+                        })
+                    end,
+                    tailwindcss = function()
+                        require('lspconfig').tailwindcss.setup({
+                            filetypes = { "templ", "astro", "javascript", "typescript", "react" },
+                            init_options = { userLanguages = { templ = "html" } },
+                        })
+                    end,
+                    emmet_ls = function()
+                        require('lspconfig').emmet_ls.setup({
+                            filetypes = { "templ", "astro", "javascript", "typescript", "react" },
+                            init_options = { userLanguages = { templ = "html" } },
+                        })
                     end,
                 }
             })
